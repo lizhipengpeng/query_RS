@@ -26,7 +26,7 @@ class Train(object):
         # training
         self.max_epoches = config.max_epoches
         self.eval_every = config.eval_every
-        self.batch_size = 5
+        self.batch_size = 20
         self.summary_flush_every = config.summary_flush_every
         self.report_every = config.report_every
 
@@ -75,12 +75,12 @@ class Train(object):
 
         return loss, probs
 
-    def train_itrs(self, train_file_src, valid_file_src):
+    def train_itrs(self, train_file_src, test_file_src):
         report_print = "At: epoch:{}: {}, loss: {}, total_time: {}"
         eval_report_print = 'At: epoch{}: {}, the eval result is {}, best result is {}, at {}: {}'
 
         train_dataset = BertRecommendDataset(file_src=train_file_src, is_training=True)
-        validation = BertRecommendDataset(file_src=valid_file_src, is_training=True)
+        validation = BertRecommendDataset(file_src=test_file_src, is_training=True)
 
         valid_data_size = validation.__len__() // 10
 
@@ -104,10 +104,10 @@ class Train(object):
 
             for batch in train_batches:
                 user, labels, seq_ids, lens, masks, seqs = batch
-                # user = user.cuda()
-                # labels = labels.cuda()
-                # seq_ids = seq_ids.cuda()
-                # masks = masks.cuda()
+                user = user.cuda()
+                labels = labels.cuda()
+                seq_ids = seq_ids.cuda()
+                masks = masks.cuda()
 
                 self.optimizer.zero_grad()
 
@@ -134,10 +134,10 @@ class Train(object):
                 for valid_batch in validation_batches:
                     user, labels, seq_ids, lens, masks, seqs = valid_batch
 
-                    # user = user.cuda()
-                    # labels = labels.cuda()
-                    # seq_ids = seq_ids.cuda()
-                    # masks = masks.cuda()
+                    user = user.cuda()
+                    labels = labels.cuda()
+                    seq_ids = seq_ids.cuda()
+                    masks = masks.cuda()
 
                     loss, probs = self.train_one_batch(user, labels, seq_ids, masks)
 
@@ -172,4 +172,4 @@ class Train(object):
 
 if __name__ == '__main__':
     train = Train(user_feature_input_size=config.user_feature_input_size)
-    train.train_itrs(train_file_src=config.train_file_src, valid_file_src=config.valid_file_src)
+    train.train_itrs(train_file_src=config.train_file_src, test_file_src=config.test_file_src)

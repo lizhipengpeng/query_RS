@@ -14,9 +14,9 @@ categories = 4
 user_feature_input_size = 256
 
 # train
-train_file_src = "./data_load/train_data.csv"
-valid_file_src = "./data_load/valid_data.csv"
-max_epoches = 50
+train_file_src = "../data/train.csv"
+# valid_file_src = "./data/test.csv"
+max_epoches = 200
 eval_every = 1
 model_dir = './Result'
 using_pre_trained_emb = False
@@ -27,5 +27,5 @@ summary_flush_every = 10
 report_every = 10
 
 # test
-test_file_src = './data_load/test_data.csv'
+test_file_src = "./data/test.csv"
 
